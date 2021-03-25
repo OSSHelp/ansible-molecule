@@ -1,0 +1,39 @@
+---
+- name: install dependencies
+  block:
+    - name: install packages
+      apt:
+        state: present
+        update_cache: true
+        cache_valid_time: 86400
+        name:
+          - python3-pip
+          - libssl-dev
+          - libffi-dev
+          - python3-setuptools
+
+    - name: upgrade pip
+      pip:
+        executable: pip3
+        name: "pip<21.0"
+        extra_args: --upgrade
+      vars:
+        ansible_python_interpreter: /usr/bin/python3
+
+    - name: upgrade PyYAML
+      pip:
+        executable: pip3
+        name: PyYAML
+        extra_args: --ignore-installed
+      vars:
+        ansible_python_interpreter: /usr/bin/python3
+      changed_when: false
+
+- name: install Molecule
+  pip:
+    executable: pip3
+    name:
+      - molecule>={{ minimal_version }}
+      - paramiko>={{ paramiko_version }}
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
